@@ -4,14 +4,10 @@ module OmniAuth
 
       option :name, 'netforum'
 
-      option :authorize_params, {
-        WebCode: 'LoginRequired'
-      }
-
       option :client_options, {
         # :site => 'https://netforum.avectra.com',
         site: 'https://uat.netforumpro.com',
-        authorize_url: '/eWeb/DynamicPage.aspx',
+        authorize_url: '/eWeb/ValidateLogin.aspx',
         authentication_wsdl: '/xWeb/Signon.asmx?WSDL',
         user_info_wsdl: '/xweb/netFORUMXMLONDemand.asmx?WSDL',
         username: 'MUST BE SET',
@@ -26,7 +22,7 @@ module OmniAuth
 
       def request_phase
         site = session['omniauth.params']['eventcode']
-        redirect client.auth_code.authorize_url({URL_success: callback_url + "?{ssoToken}", site: site}.merge(authorize_params))
+        redirect authorize_url + "?ReturnURL=" + callback_url + "?slug=#{slug}&site=#{site}"
       end
 
       def callback_phase
@@ -89,6 +85,12 @@ module OmniAuth
             membership_status: customer.member_status
           }
         end
+      end
+
+      private
+
+      def authorize_url
+        "#{options.client_options.site}#{options.client_options.authorize_url}"
       end
     end
   end
