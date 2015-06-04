@@ -22,7 +22,7 @@ module OmniAuth
 
       def request_phase
         site = session['omniauth.params']['eventcode']
-        redirect authorize_url + "?ReturnURL=" + callback_url + "?site=#{site}"
+        redirect authorize_url + "?ReturnURL=" + callback_url + "&site=#{site}"
       end
 
       def callback_phase
