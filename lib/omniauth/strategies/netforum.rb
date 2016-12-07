@@ -26,7 +26,7 @@ module OmniAuth
 
       def request_phase
         site = session['omniauth.params']['eventcode'] || client_event_code
-        redirect authorize_url + "?ReturnURL=" + URI.encode(callback_url+"?Site=#{site}") + "&Site=#{site}"
+        redirect authorize_url + "?ReturnURL=" + URI.encode(callback_url+"&Site=#{site}")
       end
 
       def callback_phase
@@ -35,9 +35,12 @@ module OmniAuth
             :token =>  request.params['ssoToken'],
             :token_expires => 60
           }
-
           self.env['omniauth.auth'] = auth_hash
-          self.env['omniauth.origin'] = '/' + get_slug(request.params['Site'])
+          self.env['omniauth.origin'] = if request.params['Site']
+            '/' + get_slug(request.params['Site'])
+          else
+            request.params['origin']
+          end
           call_app!
         else
           fail!(:invalid_credentials)
