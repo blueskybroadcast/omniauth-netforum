@@ -155,13 +155,20 @@ module OmniAuth
       end
 
       def create_request_and_response_logs(operation_name, client)
-        request_log_text = "#{provider_name.upcase} #{operation_name} Request:\nPOST #{client.last_request.url}, headers: #{client.last_request.headers}\n#{client.last_request.body}"
-        @app_event.logs.create(level: 'info', text: request_log_text)
+        if client.last_request
+          filtered_request_body = client.last_request
+                                        .body.inspect
+                                        .gsub(/tns:password>.*<\/tns:password/, "tns:password>#{Provider::SECURITY_MASK}</tns:password")
+                                        .gsub(/tns:Token>.*<\/tns:Token/, "tns:Token>#{Provider::SECURITY_MASK}</tem:Token")
+                                        .gsub(/Token>.*<\/Token/, "Token>#{Provider::SECURITY_MASK}</Token")
+          request_log_text = "#{provider_name.upcase} #{operation_name} Request:\nPOST #{client.last_request.url}, headers: #{client.last_request.headers}\n#{filtered_request_body}"
+          @app_event.logs.create(level: 'info', text: request_log_text)
 
-        response_log_text = "#{provider_name.upcase} #{operation_name} Response (code: #{client.last_response.code}):\n#{client.last_response.body}"
-        response_log_level = client.last_response.code == 200 ? 'info' : 'error'
-        @app_event.logs.create(level: response_log_level, text: response_log_text)
-        @app_event.fail! if response_log_level == 'error'
+          response_log_text = "#{provider_name.upcase} #{operation_name} Response (code: #{client.last_response.code}):\n#{client.last_response.body}"
+          response_log_level = client.last_response.code == 200 ? 'info' : 'error'
+          @app_event.logs.create(level: response_log_level, text: response_log_text)
+          @app_event.fail! if response_log_level == 'error'
+        end
       end
     end
   end
