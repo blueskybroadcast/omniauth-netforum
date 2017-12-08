@@ -108,7 +108,8 @@ module OmniAuth
             cst_key: customer.cst_key,
             member_flag: customer.member_flag,
             membership: customer.membership,
-            membership_status: customer.member_status
+            membership_status: customer.member_status,
+            individual_code: customer.ind_int_code
           }
 
           @app_event.update(raw_data: {
