@@ -42,7 +42,7 @@ GEM
     multi_json (1.12.1)
     multi_xml (0.6.0)
     multipart-post (2.0.0)
-    nokogiri (1.8.0)
+    nokogiri (1.8.2)
       mini_portile2 (~> 2.2.0)
     nori (2.6.0)
     oauth2 (1.4.0)
@@ -90,10 +90,11 @@ PLATFORMS
 DEPENDENCIES
   bundler (~> 1.3)
   netforum!
+  nokogiri (= 1.8.2)
   omniauth-netforum!
   rake
   rspec
   webmock
 
 BUNDLED WITH
-   1.11.2
+   1.16.2
